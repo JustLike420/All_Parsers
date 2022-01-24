@@ -10,6 +10,9 @@
 - Tickets
     - [kassy.ru](https://kassy.ru/)
     - [ticketland.ru](https://www.ticketland.ru/)
+- Actors
+    - [всекастинги.рф](https://всекастинги.рф)
+    - [vsekastingi.ru](https://www.vsekastingi.ru)
 - Others
     - [kontinental.ru](https://kontinental.ru/)
     - [mc.ru](https://mc.ru/)

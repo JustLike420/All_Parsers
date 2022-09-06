@@ -19,4 +19,5 @@
     - [sravni.ru](https://www.sravni.ru/)
     - [savefrom.net](https://ru.savefrom.net/)
     - [parimatch.ru](https://www.parimatch.ru/)
+    - [aeromotors.ee](https://aeromotors.ee/)
     - [seedsman.com](https://www.seedsman.com/) **18+**

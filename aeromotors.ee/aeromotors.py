@@ -56,4 +56,7 @@ if __name__ == '__main__':
                 if line is not None:
                     for i, el in enumerate(line):
                         sheet.cell(row=row, column=i+3).value = el
+                else:
+                    for i in range(50):
+                        sheet.cell(row=row, column=i+3).value = ''
             table.save('data1.xlsx')

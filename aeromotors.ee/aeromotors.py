@@ -32,7 +32,11 @@ def get_link(atr, creator):
         req = requests.get(url, headers=headers)
         src = req.text
         soup = BeautifulSoup(src, 'lxml')
-        link = soup.find('a', class_='article-name').get('href')
+        blocks = soup.find_all('div', class_='tdlist-row')
+        for block in blocks:
+            block_atr = block.find('div', class_='article-number').text.replace(' ', '')
+            if block_atr == str(atr):
+                link = block.find('a', class_='article-name').get('href')
         print(link, atr, creator)
         line = parse_card(link)
         return line

@@ -34,7 +34,7 @@ def get_link(atr, creator):
         soup = BeautifulSoup(src, 'lxml')
         blocks = soup.find_all('div', class_='tdlist-row')
         for block in blocks:
-            block_atr = block.find('div', class_='article-number').text.replace(' ', '')
+            block_atr = block.find('div', class_='article-number').text.replace(' ', '').replace('-', '')
             if block_atr == str(atr):
                 link = block.find('a', class_='article-name').get('href')
         print(link, atr, creator)
@@ -50,9 +50,9 @@ if __name__ == '__main__':
         sheet = table.active
         for row in range(2, sheet.max_row + 1):
             creator = sheet[row][0].value
-            atr = sheet[row][1].value
+            atr = str(sheet[row][1].value)
             if creator is not None:
-                line = get_link(atr, creator)
+                line = get_link(atr.replace(' ', ''), creator.upper())
                 if line is not None:
                     for i, el in enumerate(line):
                         sheet.cell(row=row, column=i+3).value = el
@@ -60,3 +60,6 @@ if __name__ == '__main__':
                     for i in range(50):
                         sheet.cell(row=row, column=i+3).value = ''
             table.save('data1.xlsx')
+    # atr = '103079'
+    # creator = 'FEBI '
+    # get_link(atr.replace(' ', ''), creator.upper())

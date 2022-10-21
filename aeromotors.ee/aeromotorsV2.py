@@ -1,3 +1,5 @@
+import os
+
 import openpyxl
 import requests
 from bs4 import BeautifulSoup
@@ -23,9 +25,10 @@ def search_code(code):
     req = requests.get(url, headers=headers)
     src = req.text
     soup = BeautifulSoup(src, 'lxml')
-
-    total = int(soup.find('div', class_='totaltext').find('b').text)
-
+    try:
+        total = int(soup.find('div', class_='totaltext').find('b').text)
+    except:
+        total = 1
     blocks = soup.find_all('div', class_='tdlist-row')
     if blocks != 0:
         for block in blocks:
@@ -68,12 +71,19 @@ def parse_card(url):
 if __name__ == '__main__':
     table = openpyxl.open(f'data2.xlsx')
     sheet = table.active
-    for row in range(2, sheet.max_row + 1):
+    if os.path.exists('table_row.txt'):
+        with open('table_row.txt', 'r+', encoding='utf-8') as log_file:
+            start_row = int(log_file.readlines()[0])
+    else:
+        start_row = 2
+    for row in range(start_row, sheet.max_row + 1):
         code = sheet[row][0].value
         if code is not None:
             urls = search_code(code)
             print(code, f'{len(urls)}', 'start!')
             for i, url in enumerate(urls):
                 parse_card(url)
+            with open('table_row.txt', 'w+', encoding='utf-8') as log_file:
+                log_file.write(str(row))
             print(code, f'{len(urls)}', 'finish!')
         print(f'{row} / {sheet.max_row}')

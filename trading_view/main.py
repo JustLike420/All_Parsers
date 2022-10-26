@@ -1,5 +1,7 @@
 import time
-
+import random
+import numpy as np
+import openpyxl
 from selenium.webdriver.common.keys import Keys
 from seleniumwire import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
@@ -67,7 +69,7 @@ class TradingViewChecker:
             EC.visibility_of_element_located(
                 (By.XPATH, '//*[@id="bottom-area"]/div[4]/div/div[2]/div/div/div[1]/div/div[2]/div[2]/div[1]'))).text
         print(net_profit, total_closed, '|', numbers)
-
+        return net_profit, total_closed
     def inputs(self, number):
         n = 0
         for i in range(2, 22, 2):
@@ -136,19 +138,75 @@ class TradingViewChecker:
 
 
 if __name__ == '__main__':
+    new_book = openpyxl.Workbook()
+    new_sheet = new_book.active
+    new_sheet['A1'].value = 'Число баров в стрике'
+    new_sheet['B1'].value = 'Общий прирост цены в стрике %'
+    new_sheet['C1'].value = '% отношения амплитуды цен стрика и пола'
+    new_sheet['D1'].value = '% на сколько минимум объемы стрика больше объемов пола'
+    new_sheet['E1'].value = 'Минимальное число баров в поле'
+    new_sheet['F1'].value = 'Максимальное число баров в поле'
+    new_sheet['G1'].value = 'Допуск к полу %'
+    new_sheet['H1'].value = 'Период скользяшей EMA'
+    new_sheet['I1'].value = 'X для фильтров SPX'
+    new_sheet['J1'].value = 'Минимальная дельта для фильтра SPX'
+    new_sheet['K1'].value = 'Тейк профит %'
+    new_sheet['L1'].value = 'Стоп лосс %'
+    new_sheet['M1'].value = 'Net Profit'
+    new_sheet['N1'].value = 'Total Closed Trades'
+
+    input_1 = [i for i in range(1, 11)]
+    input_2 = [round(i, 2) for i in np.arange(0, 2.05, 0.05)]
+    input_3 = [i for i in range(0, 51)]
+    input_4 = [i for i in range(0, 51)]
+    input_5 = [i for i in range(3, 11)]
+    input_6 = [i for i in range(0, 60, 10)]
+    input_7 = [round(i, 2) for i in np.arange(0, 0.55, 0.05)]
+    input_8 = 21
+    input_9 = [i for i in range(0, 8)]
+    input_10 = [round(i, 2) for i in np.arange(0, 1.05, 0.05)]
+    input_11 = [round(i, 2) for i in np.arange(0.1, 1.1, 0.1)]
+    input_12 = [round(i, 2) for i in np.arange(0, 1.1, 0.1)]
+
     sel = TradingViewChecker()
     sel.run()
     sel.select_bac()
     sel.open_settings()
     sel.setting_properties()
     sel.setup_checkbox()
-    numbers = [1, 0.5, 0, 50, 3, 50, 0.12, 21, 5, 0.1, 0.27, 1]
-    for i in range(1, 11):
-        numbers[0] = i
-        sel.inputs(numbers)
-        # sel.ok_button_click()
-        # time.sleep(1100)
-        try:
-            sel.get_net_stats(numbers)
-        except:
-            pass
+    # while True:
+    #     numbers = [random.choice(input_1),
+    #                random.choice(input_2),
+    #                random.choice(input_3),
+    #                random.choice(input_4),
+    #                random.choice(input_5),
+    #                random.choice(input_6),
+    #                random.choice(input_7),
+    #                input_8,
+    #                random.choice(input_9),
+    #                random.choice(input_10),
+    #                random.choice(input_11),
+    #                random.choice(input_12)]
+    #     sel.inputs(numbers)
+    #     # sel.ok_button_click()
+    #     time.sleep(1)
+    #     try:
+    #         net_profit, total_closed = sel.get_net_stats(numbers)
+    #     except:
+    #         net_profit, total_closed = 'nodata', 'nodata'
+    #     new_sheet.append((numbers[0],
+    #                       numbers[1],
+    #                       numbers[2],
+    #                       numbers[3],
+    #                       numbers[4],
+    #                       numbers[5],
+    #                       numbers[6],
+    #                       numbers[7],
+    #                       numbers[8],
+    #                       numbers[9],
+    #                       numbers[10],
+    #                       numbers[11],
+    #                       net_profit,
+    #                       total_closed
+    #                       ))
+    #     new_book.save('result.xlsx')

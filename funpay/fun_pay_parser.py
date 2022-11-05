@@ -17,6 +17,7 @@ class FunPay:
     def __init__(self):
         self.url = 'https://funpay.com/'
         self.options = webdriver.ChromeOptions()
+        self.options.add_argument("--start-maximized")
         self.driver = webdriver.Chrome(
             ChromeDriverManager().install(),
             options=self.options,
@@ -42,22 +43,35 @@ class CsGoSkins(FunPay):
         soup = BeautifulSoup(data, 'lxml')
         offers = soup.find_all('a', class_='tc-item')
         for offer in offers:
-            href = offer['href']
+            user_block = offer.find('div', class_='tc-user')
+            username = user_block.find('div', class_='media-user-name').text.strip()
+            user_href = user_block.find('div', class_='avatar-photo')['data-href']
+            rating = offer.find('span', class_='rating-mini-count').text
+            print(username, user_href, rating)
+            title = offer.find('div', class_='tc-desc-text').text
+            title = re.sub('[^\x00-\x7Fа-яА-Я]', '', title)  # delete emoji
+            title = title.split(',')[0]  # delete trash
+            type = offer['data-f-type']
+            try:
+                other = offer['data-f-other']
+            except:
+                other = ''
+            rare = offer['data-f-rare']
             quality = offer['data-f-quality']
-            description = offer.find('div', class_='tc-desc-text').text
-            description = re.sub('[^\x00-\x7Fа-яА-Я]', '', description)  # delete emoji
-            price = offer.find('div', class_='tc-price').text
-            print(href, quality, description, price)
+            href = offer['href']
+            count = offer.find('div', class_='tc-amount').text
+            price = offer.find('div', class_='tc-price')['data-s']
+            print(title, type, other, rare, quality, href, count, price)
 
 
 if __name__ == '__main__':
     funpay = CsGoSkins()
     funpay.run()
-    while True:
-        funpay.scroll()
-        try:
-            funpay.show_more()
-        except:
-            break
+    # while True:
+    #     funpay.scroll()
+    #     try:
+    #         funpay.show_more()
+    #     except:
+    #         break
     funpay.get_data()
     time.sleep(100)

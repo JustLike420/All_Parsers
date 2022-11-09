@@ -1,8 +1,6 @@
 import xml.etree.ElementTree as ET
 from typing import TypedDict
-
 import bs4.element
-import openpyxl
 import requests
 from bs4 import BeautifulSoup
 
@@ -39,29 +37,38 @@ def parse_url(url: str) -> CardDetails:
 
 
 def change_image_urls(card_description: bs4.element.Tag) -> bs4.element.Tag:
-
     images = card_description.find_all('img')
     for image in images:
-        image_src = image['src'].replace('../', 'https://www.fortu.ru/')
-        image['src'] = image_src
+        try:
+            image_src = image['src'].replace('../', 'https://www.fortu.ru/')
+            image['src'] = image_src
+        except:
+            pass
     return card_description
 
 
 def main():
     card_urls = get_card_urls()
 
+    r = ET.Element('cards')
+    i = 0
     for url in card_urls:
         card = parse_url(url)
         card['description'] = change_image_urls(card['description'])
-        print(f"[INFO] {card['code']} {url}")
-        new_sheet.append((card['code'], str(card['description'])))
-        new_book.save(f'output.xlsx')
+        print(f"[INFO] {i}/{len(card_urls)} {card['code']} {url}")
+        card_xml = ET.SubElement(r, 'card')
+
+        code = ET.SubElement(card_xml, 'code')
+        code.text = str(card['code'])
+
+        description = ET.SubElement(card_xml, 'description')
+        description.text = str(card['description'])
+        my_data = ET.tostring(r, encoding='utf-8')
+        file = open('out.xml', 'wb')
+        file.write(my_data)
+
 
 
 
 if __name__ == "__main__":
-    new_book = openpyxl.Workbook()
-    new_sheet = new_book.active
-    new_sheet['A1'].value = 'артикул'
-    new_sheet['B1'].value = 'описание'
     main()

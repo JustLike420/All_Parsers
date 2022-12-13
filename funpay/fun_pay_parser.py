@@ -42,15 +42,37 @@ class CsGoSkins(FunPay):
         data = self.driver.page_source
         soup = BeautifulSoup(data, 'lxml')
         offers = soup.find_all('a', class_='tc-item')
+
         for offer in offers:
             user_block = offer.find('div', class_='tc-user')
             username = user_block.find('div', class_='media-user-name').text.strip()
             user_href = user_block.find('div', class_='avatar-photo')['data-href']
-            rating = offer.find('span', class_='rating-mini-count').text
-            print(username, user_href, rating)
+            try:
+                rating = offer.find('span', class_='rating-mini-count').text
+            except:
+                rating = -1
+            # print(username, user_href, rating)
             title = offer.find('div', class_='tc-desc-text').text
             title = re.sub('[^\x00-\x7Fа-яА-Я]', '', title)  # delete emoji
+            if 'StatTrak' in title:
+                stat_trak = True
+                title = title.replace('StatTrak ', '')
+                title = title.replace('StatTrak', '')
+            else:
+                stat_trak = False
+
             title = title.split(',')[0]  # delete trash
+            try:
+                filtered_title = title.split('|')
+                gun_name = filtered_title[0]
+                gun_title = filtered_title[1]
+                filtered = True
+            except:
+                filtered_title = title
+                gun_name, gun_title = '', ''
+                filtered = False
+
+
             type = offer['data-f-type']
             try:
                 other = offer['data-f-other']
@@ -61,8 +83,9 @@ class CsGoSkins(FunPay):
             href = offer['href']
             count = offer.find('div', class_='tc-amount').text
             price = offer.find('div', class_='tc-price')['data-s']
-            print(title, type, other, rare, quality, href, count, price)
-
+            # print(title, type, other, rare, quality, href, count, price, stat_trak)
+            if filtered:
+                print(title, '------', gun_name, '-------', gun_title)
 
 if __name__ == '__main__':
     funpay = CsGoSkins()
@@ -70,6 +93,7 @@ if __name__ == '__main__':
     # while True:
     #     funpay.scroll()
     #     try:
+    #         funpay.get_data()
     #         funpay.show_more()
     #     except:
     #         break

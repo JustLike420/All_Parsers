@@ -1,0 +1,2 @@
+- [fragment.com](fragment) requests, logging
+- [nevesta.info](nevesta_info) requests, logging

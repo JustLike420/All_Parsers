@@ -1,0 +1,18 @@
+- [1chotel.ru](1chotel)
+- [aeromotors.ee](aeromotors.ee)
+- [gulliver.ru](child_shops/gulliver)
+- [jumbo-toys.ru](child_shops/jumbo-toys)
+- [onetoyshop.ru](child_shops/onetoyshop)
+- [steamtoys.ru](child_shops/steamtoys)
+- [toysfest.ru](child_shops/toysfest)
+- [toyway.ru](child_shops/toysfest)
+- [fortu.ru](fortu) **typed**, **async**
+- [hh.ru](hh)
+- [kassy.ru](kassy)
+- [kontinental.ru](kontinental)
+- [mc.ru](mc.ru)
+- [protuning.com](protuning)
+- [sravni.ru](sravni) async
+- [ticketland.ru](ticketland)
+- [twitter.com](twitter) api
+- [всекастинги.рф](vse_kastingi) async

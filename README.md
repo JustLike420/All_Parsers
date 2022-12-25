@@ -1,23 +1,5 @@
-# All my parsers
+# All my parsers (29+)
 
-- Child_Shops
-    - [gulliver.ru](https://www.gulliver.ru/)
-    - [jumbo-toys.ru](https://jumbo-toys.ru/)
-    - [onetoyshop.ru](https://onetoyshop.ru)
-    - [steamtoys.ru](https://steamtoys.ru)
-    - [toysfest.ru](https://www.toysfest.ru)
-    - [toyway.ru](https://www.toyway.ru/)
-- Tickets
-    - [kassy.ru](https://kassy.ru/)
-    - [ticketland.ru](https://www.ticketland.ru/)
-- Actors
-    - [всекастинги.рф](https://всекастинги.рф)
-    - [vsekastingi.ru](https://www.vsekastingi.ru)
-- Others
-    - [kontinental.ru](https://kontinental.ru/)
-    - [mc.ru](https://mc.ru/)
-    - [sravni.ru](https://www.sravni.ru/)
-    - [savefrom.net](https://ru.savefrom.net/)
-    - [parimatch.ru](https://www.parimatch.ru/)
-    - [aeromotors.ee](https://aeromotors.ee/)
-    - [seedsman.com](https://www.seedsman.com/) **18+**
+- [Typed python, classes](typed.md)
+- [Selenium](selenium.md)
+- [Requests](requests.md)

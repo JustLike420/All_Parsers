@@ -21,11 +21,12 @@ def convert_workbook():
 
 
 class Gis:
-    def __init__(self):
-        self.url = 'https://2gis.ru/n_urengoy/search/%D1%81%D1%82%D0%BE%D0%BC%D0%B0%D1%82%D0%BE%D0%BB%D0%BE%D0%B3%D0%B8%D0%B8'
+    def __init__(self, url):
+        self.url = url
         self.stream = open("result.csv", "w", newline='')
         self.writer = csv.writer(self.stream)
         self.options = webdriver.ChromeOptions()
+        self.options.add_argument('--headless')
         # self.options.add_argument(r"user-data-dir=C:\Users\Vladimir\PycharmProjects\All_Parsers\User Data")
         self.driver = webdriver.Chrome(
             ChromeDriverManager().install(),
@@ -103,7 +104,8 @@ class Gis:
 
 
 if __name__ == '__main__':
-    a = Gis()
+    gis_link = input('[+] Input link: ')
+    a = Gis(gis_link)
     a.run()
     a.driver.close()
     a.stream.close()

@@ -1,2 +1,3 @@
 - [fragment.com](fragment) requests, logging
 - [nevesta.info](nevesta_info) requests, logging
+- [gorko.ru](gorko_ru) requests, logging, typed, class-based

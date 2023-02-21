@@ -2,3 +2,4 @@
 - [nevesta.info](nevesta_info) requests, logging
 - [gorko.ru](gorko) requests, logging, typed, class-based
 - [wordsofwonders](words_of_wonders) requests, async, logging, typed, class-based
+- [ol_partners](ol_partners) requests, async, typed, class-based

@@ -1,27 +1,67 @@
-import csv
 import json
 import os
 import re
 import time
-
+from selenium.webdriver.common.by import By
+from seleniumwire import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
 import openpyxl
-from openpyxl import Workbook, load_workbook
-import csv
 from loguru import logger
 import requests
 from bs4 import BeautifulSoup
+from dotenv import load_dotenv
 
+load_dotenv()
 logger.add("out.log", backtrace=True, diagnose=True, rotation='50 MB')
 
 
-class OlPartnersParser:
+class OlPartnersAuth:
     def __init__(self):
+        self.url = 'http://ol.partners/Account/Login'
+        self.options = webdriver.ChromeOptions()
+        self.options.add_argument('--headless')
+        self.driver = webdriver.Chrome(
+            ChromeDriverManager().install(),
+            options=self.options,
+        )
+
+        self.email = os.getenv('email')
+        self.password = os.getenv('password')
+        logger.info("Запускаю браузер")
+
+    def auth(self) -> None:
+        logger.info("Прохожу авторизацию")
+        self.driver.get(self.url)
+
+        email_input = self.driver.find_element(By.ID, "Email")
+        email_input.send_keys(self.email)
+        password_input = self.driver.find_element(By.ID, "Password")
+        password_input.send_keys(self.password)
+
+        login_button = self.driver.find_element(By.CLASS_NAME, "submitBlue")
+        login_button.click()
+        logger.success("Авторизация завершена")
+
+    def get_cookies(self) -> dict:
+        logger.info("Получаю куки")
+        cookies_dict = {}
+        cookies = self.driver.get_cookies()
+        for cookie in cookies:
+            cookies_dict[cookie['name']] = cookie['value']
+        self.driver.quit()
+        return cookies_dict
+
+
+class OlPartnersParser:
+    def __init__(self, cookies: dict):
         self.url = "http://ol.partners/Products"
 
         self.workbook = openpyxl.Workbook()
 
         self.sheet = self.workbook.active
         self.sheet.append(['Code', 'Name', 'EUR', 'USD', 'UAH many', 'UAH', 'AvailabilityStatus'])
+
+        self.cookies = cookies
 
     def __del__(self):
         self.workbook.save('data.xlsx')
@@ -47,25 +87,19 @@ class OlPartnersParser:
 
     def site_request(self, category_id) -> str:
         """Запрос на страницу"""
-        cookies = {
-            '.AspNetCore.Antiforgery.w88DwCwRc4w': 'CfDJ8M0WEM0f1wlFhG3xjGgysWKWOrxUDI-6METSGlfnhmdAmeffPy7bX9a0dnekhY_W2yDhHIPWu4LQDPTd9OAvNc6GZG9kSCB3G5NQRbHP66SxYBiHmoAisQsk1wYrg2TYKogF6ZkcvDhKMtt-WVHPmX8',
-            '.AspNetCore.Cookies': 'CfDJ8M0WEM0f1wlFhG3xjGgysWJzhOAng9sdVTbL3Rc-96_J-9KLYZzRHkN1T7eHZOvG7EAAJmu9nxpJHwqedoR6HTUl4Smk3dxDBHZESuGcGEbjmWOzg9osFqdtYjZBM9N36BgpMu8dB25-S0UohYxX120jo83kfUxP5PMQcUt0g3LWSgE9rW1_ODOO6N3zTSfJ0j1ZytSnLBJBGdZzSnt0eTICKqTIU_-bfraPsFcfCcq3IwPTJ3u2JS2y0su-BJtePYyypgGiMe9FYdMaHVT9dJDGbEK74WeNUYJT-HjjdS7OevqhY4gJjgsDTl0aDf7l_B_m6u5upC2JQV30vjl3ocgLJePhOCOcDi_HdQbhAro6lwHoJMPpfF1PBVP0fuV-VuHiuQB0TH990yRpmnm6hvO0tfqFB07VJJeKagtKxDkSZUCCnDwv_mrfm1daTe7rKE9mNRAyLmI6PmTBdmfjh7HoCZBTsdwlCZO2A-akM_AWx1B5fCd-WhkvxRx3pG1PMPUEdIT-8BAA9AlgMNmWuHpoFXNTxUwc_RfbXv3HevT6iC5XzP2_f38Lu9xObUFcBvRVwqCn3h74fXC_PwI3wyfcz69EUTlqBVgjzsKHwLyA1B1WVboibfKhh0Y7RPW7SCeco4VgdSO5syjewMcGxW3uxFNdWpEY5ORhBQzpx7z7zZ3_XIwq3tHTBpiygAbgyTwmDW68d1Q5FomejFY5RXM',
-        }
-
         headers = {
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-            'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
-            'Cache-Control': 'max-age=0',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/110.0',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+            'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3',
+            'Referer': 'http://ol.partners/Account/Login?ReturnUrl=^%^2F',
             'Connection': 'keep-alive',
-            'Referer': 'http://ol.partners/',
             'Upgrade-Insecure-Requests': '1',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36',
         }
         params = {
             'categoryId': category_id,
         }
         try:
-            html = requests.get(self.url, params=params, cookies=cookies, headers=headers).text
+            html = requests.get(self.url, params=params, cookies=self.cookies, headers=headers).text
         except:
             logger.exception('Connection error')
 
@@ -75,6 +109,7 @@ class OlPartnersParser:
         return html
 
     def starter(self) -> None:
+        logger.info("Запуск парсера")
         try:
             all_categories = ['11f01a80-c6dd-43f1-ae13-1feb3af842e4',
                               '940e48f2-1b99-44e3-95d0-456f77b1cbfe',
@@ -98,11 +133,14 @@ class OlPartnersParser:
         except Exception as e:
             logger.exception(e)
         else:
-            logger.info('Job DONE')
+            logger.info("Готово!")
         finally:
 
-            logger.info('=====================Close scraping=====================')
+            logger.success('=====================Парсинг завершен=====================')
 
 
 if __name__ == '__main__':
-    OlPartnersParser().starter()
+    loginer = OlPartnersAuth()
+    loginer.auth()
+    cookies = loginer.get_cookies()
+    OlPartnersParser(cookies).starter()

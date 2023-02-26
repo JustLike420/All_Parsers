@@ -1,0 +1,7 @@
+webdriver-manager
+selenium-wire
+loguru
+openpyxl
+requests
+beautifulsoup4
+python-dotenv

@@ -17,3 +17,4 @@
 - [twitter.com](twitter) api
 - [всекастинги.рф](vse_kastingi) async
 - [wed-expert](wed-expert) async
+- [svadba-msk](svadba-msk) async
